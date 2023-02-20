@@ -1,7 +1,8 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth import authenticate
 
 from .models import Choice, Question
 
@@ -42,3 +43,17 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('myapp:results', args=(question.id,)))
+    
+# Autenticando
+def auth(request):
+    user = authenticate(username="John", password='123456')
+
+    if user is not None:
+        context = {
+            'user': user
+        }
+    
+    else:
+        raise Http404("User not found! You're logged in as an annonymous user ")
+    
+    return render(request, 'myapp/auth.html', context)
